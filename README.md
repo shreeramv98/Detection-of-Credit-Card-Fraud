@@ -24,3 +24,19 @@ How to Detect Credit Card Fraud:
 ->Model Deployment: Use the trained model to identify fraud in credit card transactions in real time.
 
 ->Feedback Loop: Update and refine the model on a regular basis in response to fresh data and developing fraud strategies.
+
+PROJECT-PROCEDURES:
+-------------------
+1. Importing Libraries
+2. Importing Datasets
+3. Data Exploration
+4. Data Manipulation
+5. Data Modeling
+6. Fitting Logistic Regression Model
+7. Fitting a Decision Tree Model
+8. Artificial Neural Network(ANN Model)
+9. Gradient Boosting(GBM)
+
+DATASET LINK:
+-------------
+https://www.kaggle.com/code/atharvaingle/credit-card-fraud-detection-with-r-sampling/input

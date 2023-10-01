@@ -40,3 +40,7 @@ PROJECT-PROCEDURES:
 DATASET LINK:
 -------------
 https://www.kaggle.com/code/atharvaingle/credit-card-fraud-detection-with-r-sampling/input
+
+SUMMARY:
+--------
+In this project, we gained expertise in building a credit card fraud detection model with the power of machine learning. We harnessed a range of ML algorithms to create this model, complete with visual representations of each model's performance. Our journey also encompassed the analysis and visualization of data, enabling us to distinguish fraudulent transactions from other data types effectively.

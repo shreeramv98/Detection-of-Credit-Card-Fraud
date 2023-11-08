@@ -19,66 +19,68 @@ library(caret)
 library(data.table)  
 library(pROC)
 library(caTools)  
-creditcard_data <- read.csv("D:/SourceCodeforMSProjects/R-Project/Credit Card Fraud Detection/creditcard.csv")
+credcarddataset <- read.csv("D:/SourceCodeforMSProjects/R-Project/Credit Card Fraud Detection/creditcard.csv")
 
-dim(creditcard_data)
-head(creditcard_data,6)
-tail(creditcard_data,6)
-table(creditcard_data$Class)
-summary(creditcard_data$Amount)
-names(creditcard_data)
-var(creditcard_data$Amount)
-sd(creditcard_data$Amount)
-head(creditcard_data)
+dim(credcarddataset)
+head(credcarddataset,6)
+tail(credcarddataset,6)
+table(credcarddataset$Class)
+summary(credcarddataset$Amount)
+names(credcarddataset)
+var(credcarddataset$Amount)
+sd(credcarddataset$Amount)
+head(credcarddataset)
 
-# Assuming 'creditcard_data' is your dataset
+# Assuming 'credcarddataset' is your dataset
 
-creditcard_data$Amount <- scale(creditcard_data$Amount)
-NewData=creditcard_data[,-c(1)]
-head(NewData)
+credcarddataset$Amount <- scale(credcarddataset$Amount)
+latestdata=credcarddataset[,-c(1)]
+head(latestdata)
 set.seed(123)
-data_sample = sample.split(NewData$Class,SplitRatio=0.80)
-train_data = subset(NewData,data_sample==TRUE)
-test_data = subset(NewData,data_sample==FALSE)
-dim(train_data) 
-dim(test_data)
-Logistic_Model = glm(Class~.,test_data,family=binomial())
-summary(Logistic_Model)                     
-plot(Logistic_Model)
+sample_dataset = sample.split(latestdata$Class,SplitRatio=0.80)
+trainingdata = subset(latestdata,sample_dataset==TRUE)
+testingdata = subset(latestdata,sample_dataset==FALSE)
+dim(trainingdata) 
+dim(testingdata)
+logist_model = glm(Class~.,testingdata,family=binomial())
+summary(logist_model)                     
+plot(logist_model)
 
-Logistic_Model = glm(Class~.,train_data,family=binomial())
-summary(Logistic_Model)
-library(pROC)  # display and analyze ROC curves
-lr.predict <- predict(Logistic_Model,test_data, probability = TRUE)
-auc.gbm = roc(test_data$Class, lr.predict, plot = TRUE, col = "blue")
-
-library(rpart)  # Recursive partitioning for classification, regression and survival trees.
+logist_model = glm(Class~.,trainingdata,family=binomial())
+summary(logist_model)
+# Show and examine ROC curves
+library(pROC)
+lr.predict <- predict(logist_model,testingdata, probability = TRUE)
+auc.gbm = roc(testingdata$Class, lr.predict, plot = TRUE, col = "green")
+# Recursive partitioning for classification, regression and survival trees.
+library(rpart)
 library(rpart.plot)
-decisionTree_model <- rpart(Class ~ . , creditcard_data, method = 'class')
-predicted_val <- predict(decisionTree_model, creditcard_data, type = 'class')
-probability <- predict(decisionTree_model, creditcard_data, type = 'prob')
+modeldectree <- rpart(Class ~ . , credcarddataset, method = 'class')
+forcastedvalue <- predict(modeldectree, credcarddataset, type = 'class')
+probability <- predict(modeldectree, credcarddataset, type = 'prob')
 
-rpart.plot(decisionTree_model)
-library(neuralnet) # nn for computation of a given neural network for given covariate vectors (formerly compute)
-ANN_model <- neuralnet(Class~.,data=train_data,linear.output=F)
-plot(ANN_model)
+rpart.plot(modeldectree)
+# nn for calculating a specified neural network for specified covariate vectors
+library(neuralnet)
+modelANN <- neuralnet(Class~.,data=trainingdata,linear.output=F)
+plot(modelANN)
 
-predANN=compute(ANN_model,test_data)
-resultANN=predANN$net.result
-resultANN=ifelse(resultANN>0.5,1,0)
-library(gbm, quietly=TRUE)  # An implementation of extensions to Freund and Schapire's AdaBoost algorithm and Friedman's gradient boosting machine.
-
-# Get the time to train the GBM model
+ANN_prediction=compute(modelANN,testingdata)
+outputANN=ANN_prediction$net.result
+outputANN=ifelse(outputANN>0.5,1,0)
+# An implementation of gradient boosting machine proposed by Friedman and modifications to the AdaBoost method by Freund and Schapire.
+library(gbm, quietly=TRUE)
+# Spend enough time training the GBM model.
 system.time(
   model_gbm <- gbm(Class ~ .
                    , distribution = "bernoulli"
-                   , data = rbind(train_data, test_data)
+                   , data = rbind(trainingdata, testingdata)
                    , n.trees = 500
                    , interaction.depth = 3
                    , n.minobsinnode = 100
                    , shrinkage = 0.01
                    , bag.fraction = 0.5
-                   , train.fraction = nrow(train_data) / (nrow(train_data) + nrow(test_data))
+                   , train.fraction = nrow(trainingdata) / (nrow(trainingdata) + nrow(testingdata))
   )
 )
 
@@ -87,8 +89,8 @@ gbm.iter = gbm.perf(model_gbm, method = "test")
 model.influence = relative.influence(model_gbm, n.trees = gbm.iter, sort. = TRUE)
 
 plot(model_gbm)
-gbm_test = predict(model_gbm, newdata = test_data, n.trees = gbm.iter)
-gbm_auc = roc(test_data$Class, gbm_test, plot = TRUE, col = "red")
+gbm_test = predict(model_gbm, newdata = testingdata, n.trees = gbm.iter)
+gbm_auc = roc(testingdata$Class, gbm_test, plot = TRUE, col = "red")
 print(gbm_auc)
                      
                      
